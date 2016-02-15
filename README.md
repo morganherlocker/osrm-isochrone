@@ -36,7 +36,7 @@ var options = {
   resolution: 25, // sample resolution
   maxspeed: 70, // in 'unit'/hour
   unit: 'miles', // 'miles' or 'kilometers'
-  network: './dc.osrm' // rebuilt dc osrm network file, or use the one just built.
+  network: './dc.osrm' // prebuilt dc osrm network file, or use the one just built.
 }
 
 isochrone(location, time, options, function(err, drivetime) {
