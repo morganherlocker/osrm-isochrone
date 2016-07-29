@@ -44,51 +44,40 @@ module.exports = function (center, time, options, done) {
         var destinations = featureCollection([]);
 
         var coord = targets.features.map(function(feat) {
-            return [feat.geometry.coordinates[1], feat.geometry.coordinates[0]]
+            return [feat.geometry.coordinates[0], feat.geometry.coordinates[1]]
         });
+        coord.push([center[0], center[1]]);
+        var sources = coord.length - 1;
         osrm.table({
-                destinations: coord,
-                sources: [[center[1], center[0]]]
+                coordinates: coord,
+                sources: [sources]
             }, function(err, res) {
                 if (err) {
                     console.log(err);
                     return done(err);
                 }
-                if (res.distance_table &&
-                    res.distance_table[0] && res.destination_coordinates &&
-                    res.distance_table[0].length == res.destination_coordinates.length) {
-
-                    res.distance_table[0].forEach(function(time, idx) {
+                if (res.durations &&
+                    res.durations[0] && res.destinations &&
+                    res.durations[0].length == res.destinations.length) {
+                    res.durations[0].pop();
+                    res.durations[0].forEach(function(t, idx) {
                         var distanceMapped = distance(
-                            point(coord[idx][1], coord[idx][0]),
-                            point(res.destination_coordinates[idx][1], res.destination_coordinates[idx][0]),
+                            point(coord[idx][0], coord[idx][1]),
+                            point(res.destinations[idx].location[0], res.destinations[idx].location[1]),
                             unit
                         );
                         if (distanceMapped < sizeCellGrid) {
-                            destinations.features.push({
-                                type: 'Feature',
-                                properties: {
-                                    eta: time / 10
-                                },
-                                geometry: {
-                                    type: 'Point',
-                                    coordinates: [res.destination_coordinates[idx][1], res.destination_coordinates[idx][0]]
-                                }
-                            });
+                            var dest = point(res.destinations[idx].location[0], res.destinations[idx].location[1]);
+                            dest.properties = {};
+                            dest.properties.eta = t / 10;
+                            destinations.features.push(dest);
                         }
                         // specific for isoline algorithm: exclude some points from grid
                         else {
-                            destinations.features.push({
-                                type: 'Feature',
-                                properties: {
-                                    // this point cannot be routed => a penality 2 is applied to maxspeed
-                                    eta: time + (distanceMapped - sizeCellGrid) / (options.maxspeed / 3600) * 2
-                                },
-                                geometry: {
-                                    type: 'Point',
-                                    coordinates: [coord[idx][1], coord[idx][0]]
-                                }
-                            });
+                            var dest = point(coord[idx][0], coord[idx][1]);
+                            dest.properties = {};
+                            dest.properties.eta = t + (distanceMapped - sizeCellGrid) / (options.maxspeed / 3600) * 2;
+                            destinations.features.push(dest);
                         }
                     });
                 }
