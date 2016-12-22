@@ -1,5 +1,4 @@
 var test = require('tape'),
-    area = require('geojson-area')
     isochrone = require('../');
 
 test('osrm-isochrone', function(t) {
