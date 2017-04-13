@@ -9,13 +9,13 @@ Generate drive-time [isochrones](http://en.wikipedia.org/wiki/Isochrone_map) fro
 ![](https://dl.dropbox.com/s/r7hntimgiv5cfeq/Screenshot%202014-11-24%2017.20.32.png?dl=0)
 
 
-##Install
+## Install
 
 ```sh
 npm install osrm-isochrone
 ```
 
-##Build
+## Build
 An osrm file is required for routing. This can be generated using included binaries. (*Note: this will take a lot of processing power if you are planning to use the entire planet.osm file, for general use a regional OSM data extract is preferable. More info [here](https://github.com/Project-OSRM/osrm-backend/wiki/Running-OSRM)*)
 
 ```sh
@@ -24,7 +24,7 @@ An osrm file is required for routing. This can be generated using included binar
 ./node_modules/osrm-isochrone/osrm/lib/binding/osrm-prepare mydata.osrm -p ./node_modules/osrm-isochrone/osrm/test/data/car.lua
 ```
 
-##Usage
+## Usage
 Create a file containing something such as:
 ```js
 var isochrone = require('osrm-isochrone');
@@ -53,7 +53,7 @@ node my-file.js
 
 The output will be in GeoJSON format.
 
-###Advanced
+### Advanced
 Alternatively the `network` parameter can be an [OSRM](https://github.com/Project-OSRM/node-osrm) module instance. Allowing setup an OSRM with custom parameters, e.g. usage of shared-memory.
 
 You can too define your own function to draw line/polygon instead of default:
@@ -85,4 +85,3 @@ isochrone.draw = function(destinations) {
 }
 isochrone.getIsochrone();
 ```
-
