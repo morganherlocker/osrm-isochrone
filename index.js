@@ -35,7 +35,7 @@ module.exports = function (center, time, options, done) {
         var bboxGrid = this.bboxGrid = bbox(spokes);
         var sizeCellGrid = this.sizeCellGrid = distance(point([bboxGrid[0], bboxGrid[1]]), point([bboxGrid[0], bboxGrid[3]]), unit) / options.resolution;
 
-        //compute destination grid
+        // compute destination grid
         var targets = grid(bboxGrid, sizeCellGrid, unit);
         targets.features = targets.features.filter(function(feat) {
             return distance(point(feat.geometry.coordinates), centerPt, unit) <= length;
@@ -49,9 +49,11 @@ module.exports = function (center, time, options, done) {
         var sources = coord.length - 1;
 
         var tableOptions = {
-          coordinates: coord,
-          sources: [sources]
-        }
+            coordinates: coord,
+            sources: [sources]
+        };
+        if ('approach' in options) tableOptions.approach = options.approach;
+        if ('exclude' in options) tableOptions.exclude = options.exclude;
 
         osrm.table(tableOptions, function(err, res) {
             if (err) {
@@ -73,8 +75,7 @@ module.exports = function (center, time, options, done) {
             });
             var result = self.draw(destinations);
             return done(null, result);
-            }
-        );
+        });
     };
     var self = this;
 
