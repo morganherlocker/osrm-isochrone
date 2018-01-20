@@ -9,22 +9,23 @@ Generate drive-time [isochrones](http://en.wikipedia.org/wiki/Isochrone_map) fro
 ![](https://dl.dropbox.com/s/r7hntimgiv5cfeq/Screenshot%202014-11-24%2017.20.32.png?dl=0)
 
 
-##Install
+## Install
 
 ```sh
 npm install osrm-isochrone
 ```
+Note that `osrm` binaries are currently provided only for Node.js 4,6. If you are using different version of Node.js you can either build `osrm` from source or use version manager such as nvm to switch to Node.js 6. 
 
-##Build
+## Build
 An osrm file is required for routing. This can be generated using included binaries. (*Note: this will take a lot of processing power if you are planning to use the entire planet.osm file, for general use a regional OSM data extract is preferable. More info [here](https://github.com/Project-OSRM/osrm-backend/wiki/Running-OSRM)*)
 
 ```sh
 #first download an osm file containing the area you need
-./node_modules/osrm-isochrone/osrm/lib/binding/osrm-extract mydata.osm -p ./node_modules/osrm-isochrone/osrm/test/data/car.lua
-./node_modules/osrm-isochrone/osrm/lib/binding/osrm-prepare mydata.osrm -p ./node_modules/osrm-isochrone/osrm/test/data/car.lua
+./node_modules/osrm/lib/binding/osrm-extract mydata.osm -p ./node_modules/osrm/profiles/car.lua
+./node_modules/osrm/lib/binding/osrm-contract mydata.osrm
 ```
 
-##Usage
+## Usage
 Create a file containing something such as:
 ```js
 var isochrone = require('osrm-isochrone');
@@ -36,7 +37,7 @@ var options = {
   resolution: 25, // sample resolution
   maxspeed: 70, // in 'unit'/hour
   unit: 'miles', // 'miles' or 'kilometers'
-  network: './dc.osrm' // prebuilt dc osrm network file, or use the one just built.
+  network: './mydata.osrm' // osrm network file we just built
 }
 
 isochrone(location, time, options, function(err, drivetime) {
@@ -53,7 +54,7 @@ node my-file.js
 
 The output will be in GeoJSON format.
 
-###Advanced
+### Advanced
 Alternatively the `network` parameter can be an [OSRM](https://github.com/Project-OSRM/node-osrm) module instance. Allowing setup an OSRM with custom parameters, e.g. usage of shared-memory.
 
 You can too define your own function to draw line/polygon instead of default:
@@ -68,7 +69,7 @@ var options = {
   resolution: 25, // sample resolution
   maxspeed: 70, // in 'unit'/hour
   unit: 'miles', // 'miles' or 'kilometers'
-  network: './dc.osrm' // prebuild dc osrm network file
+  network: './mydata.osrm' // osrm network file we just built
 }
 
 var isochrone = new Isochrone(location, time, options, function(err, drivetime) {
